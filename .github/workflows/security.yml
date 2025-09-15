@@ -30,17 +30,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - # --- Gitleaks Adımı ---
+      # --- Gitleaks Adımı ---
       - name: Gitleaks Scan
-        run: |
-          # Gitleaks aracını indirme ve çalıştırma
-          curl -sfL https://raw.githubusercontent.com/gitleaks/gitleaks/main/contrib/install.sh | sh -s -- -b . v8.24.3
-          ./gitleaks detect --redact --report-format=sarif --report-path=gitleaks.sarif || true
-          
-          # Hata vermediği için sonrasında dosya yükleme işlemi de düzgün çalışacaktır.
-          # Gitleaks sarif dosyasını yükle
-          github/codeql-action/upload-sarif@v3 --sarif-file=gitleaks.sarif
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true # Bu satır, hata verse bile devam etmesini sağlar.
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
       # --- Syft ile SBOM Oluşturma Adımı ---
