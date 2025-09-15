@@ -52,7 +52,14 @@ jobs:
           name: my-app-sbom
           path: sbom.json
           retention-days: 7
-
+      # Gitleaks ile hassas bilgileri tara
+      - name: Gitleaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          # GitHub Security tabına sonuçları yükler
+          # Gitleaks.toml dosyası yoksa varsayılan ayarlarla çalışır
+          # Gerekirse --config flag'i ile dosya yolunu belirtebilirsin
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       # --- Semgrep Adımları ---
       - name: Scan code using project's configuration
         uses: returntocorp/semgrep-action@fcd5ab7459e8d91cb1777481980d1b18b4fc6735
