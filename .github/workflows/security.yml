@@ -27,25 +27,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # --- Docker Build & SBOM Adımları ---
-      - name: Build Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          tags: my-app:latest # Kendi uygulamanın adıyla değiştir
-          outputs: type=docker,dest=/tmp/image.tar
+      # --- Projenin Kendi Build Adımları ---
+      # ** BURAYI PROJENİN DİLİNE GÖRE DÜZENLE **
+      # Örnek: Node.js projesi için
+      # - name: Setup Node.js
+      # #  uses: actions/setup-node@v4
+      # #  with:
+      # #    node-version: '18'
+      # # - name: Install dependencies
+      # #   run: npm ci
 
-      - name: Load Docker Image
-        run: docker load --input /tmp/image.tar
-
+      # --- Syft ile SBOM Oluşturma Adımı ---
       - name: Generate SBOM with Syft
-        uses: anchore/syft-action@v0.12.0
-        id: syft
+        uses: anchore/sbom-action@v0 # <-- BURAYI GÜNCELLEDİK!
         with:
-          source: '.'
-          output: 'json'
-          file: 'sbom.json'
+          source: '.' # Şu anki dizini tarayacak
+          output-file: 'sbom.json'
+          format: 'json'
 
       - name: Upload SBOM as an Artifact
         uses: actions/upload-artifact@v4
